@@ -26,25 +26,40 @@ const fetchMyIP = function(callback) {
   });
 };
 
-const fetchCoordsByIP = function(ip, cb) {
+const fetchCoordsByIP = function(ip, callback) {
   request(`https://ipvigilante.com/${ip}`, (error, response, body) => {
     if (error) {
-      cb(error, null);
+      callback(error, null);
       return;
     }
     if (response.statusCode !== 200) {
       const msg = `Status Code ${response.statusCode} when fetching coordinates for IP. Response: ${body}`;
-      cb(Error(msg), null);
+      callback(Error(msg), null);
       return;
     }
     const latitude = (JSON.parse(body).data.latitude);
     const longitude = (JSON.parse(body).data.longitude);
     const coordinates = {"latitude": latitude, "longitude": longitude};
-    cb(null, coordinates);
+    callback(null, coordinates);
   });
 };
 
-module.exports = { fetchMyIP, fetchCoordsByIP };
+
+const fetchISSFlyOverTimes = function(coords, callback) {
+  request(`http://api.open-notify.org/iss-pass.json?lat=${coords.latitude}&lon=${coords.longitude}`, (error, response, body) => {
+    if (error) {
+      callback(error, null);
+      return;
+    }
+    if (response.statusCode !== 200) {
+      callback(Error(`Status Code ${response.statusCode} when fetching ISS pass times: ${body}`), null);
+      return;
+    }
+    const ohpp = JSON.parse(body).response;
+    callback(null, ohpp);
+  });
+};
 
 
 
+module.exports = { fetchMyIP, fetchCoordsByIP, fetchISSFlyOverTimes };
