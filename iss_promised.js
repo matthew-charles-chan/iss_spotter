@@ -4,12 +4,10 @@ const fetchMyIP = function() {
   return request('https://api.ipify.org?format=json');
 };
 
-
 const fetchCoordsByIP = function(body) {
   const ip = JSON.parse(body).ip;
   return request(`http://ip-api.com/json/${ip}`);
 };
-
 
 const fetchISSFlyOverTimes = function(body) {
   const { lat, lon } = JSON.parse(body);
@@ -25,11 +23,6 @@ const nextISSTimesForMyLocation = function() {
       return OHPPs;
     });
 };
-
-
-
-
-
 
 module.exports = { nextISSTimesForMyLocation };
 
