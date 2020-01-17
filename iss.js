@@ -27,18 +27,18 @@ const fetchMyIP = function(callback) {
 };
 
 const fetchCoordsByIP = function(ip, callback) {
-  request(`https://ipvigilante.com/${ip}`, (error, response, body) => {
+  request(`http://ip-api.com/json/${ip}`, (error, response, body) => {
     if (error) {
       callback(error, null);
       return;
     }
     if (response.statusCode !== 200) {
-      const msg = `Status Code ${response.statusCode} when fetching coordinates for IP. Response: ${body}`;
+      const msg = `Status Code ${response.statusCode} when fetching coordinates for IP.\nResponse:\n  ${body}`;
       callback(Error(msg), null);
       return;
     }
-    const latitude = (JSON.parse(body).data.latitude);
-    const longitude = (JSON.parse(body).data.longitude);
+    const latitude = (JSON.parse(body).lat);
+    const longitude = (JSON.parse(body).lon);
     const coordinates = {"latitude": latitude, "longitude": longitude};
     callback(null, coordinates);
   });
