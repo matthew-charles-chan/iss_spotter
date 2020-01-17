@@ -13,26 +13,38 @@ const request = require('request');
 const fetchMyIP = function(callback) {
   request('https://api.ipify.org?format=json', (error, response, body) => {
     if (error) {
-      callback(error, null)
+      callback(error, null);
       return;
     }
     if (response.statusCode !== 200) {
       const msg = `Status Code ${response.statusCode} when fetching IP. Response: ${body}`;
       callback(Error(msg), null);
       return;
-    }  
+    }
     const ip = JSON.parse(body).ip;
-    callback(null, ip)
+    callback(null, ip);
   });
+};
 
-}
+const fetchCoordsByIP = function(ip, cb) {
+  request(`https://ipvigilante.com/${ip}`, (error, response, body) => {
+    if (error) {
+      cb(error, null);
+      return;
+    }
+    if (response.statusCode !== 200) {
+      const msg = `Status Code ${response.statusCode} when fetching coordinates for IP. Response: ${body}`;
+      cb(Error(msg), null);
+      return;
+    }
+    const latitude = (JSON.parse(body).data.latitude);
+    const longitude = (JSON.parse(body).data.longitude);
+    const coordinates = {"latitude": latitude, "longitude": longitude};
+    cb(null, coordinates);
+  });
+};
 
-module.exports = { fetchMyIP };
+module.exports = { fetchMyIP, fetchCoordsByIP };
 
-// request('https://api.ipify.org?format=json', (error, response, body) => {
-//   const ip = JSON.parse(body).ip;
-  // console.log(ip);
-  // const ip = data.ip
-  // console.log(ip)
-  // console.log(ip)    
-// });
+
+
